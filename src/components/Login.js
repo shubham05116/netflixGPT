@@ -1,8 +1,38 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Header from './Header';
 import { Link } from 'react-router-dom';
+import { checkDataValidation } from '../utils/validate';
+import { auth } from '../utils/firebase';
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+
 
 const Login = () => {
+
+    const email = useRef(null);
+    const password = useRef(null);
+    const[ErrorMessage, setErrorMessage]=useState("");
+
+
+
+    const handleValidation = () => {
+      const message= checkDataValidation(email.current.value, password.current.value);
+setErrorMessage(message)
+
+if(message===null){
+    signInWithEmailAndPassword(auth,email.current.value, password.current.value)
+  .then((userCredential) => {
+    // Signed in 
+    const user = userCredential.user;
+    console.log(user)
+    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+  });
+}
+
+    }
 
 
     return (
@@ -15,28 +45,32 @@ const Login = () => {
                 />
             </div>
             <div className='h-screen text-white flex flex-col items-center justify-center'>
-                <form className='absolute mt-20 p-14 bg-black w-1/3 bg-opacity-80'>
+                <form onSubmit={(e) => e.preventDefault()} className='absolute mt-20 p-14 bg-black w-1/3 bg-opacity-80'>
                     <h1 className='text-white font-bold text-3xl py-4'>
                         Sign In
                     </h1>
 
 
                     <input
+                    ref={email}
                         className='rounded-lg my-4 p-4 w-full bg-gray-700'
                         type='email'
                         placeholder='Email or Phone Number'
                     />
+
                     <br />
                     <input
+                    ref={password}
                         className='rounded-lg my-4 p-4 w-full bg-gray-700'
                         type='password'
                         placeholder='Password'
                     />
                     <br />
-                    <button className='my-6 p-4 w-full rounded-lg bg-red-600 text-white font-semibold'>
+                    <p className='text-red-700 font-semibold'>{ErrorMessage}</p>
+
+                    <button className='my-6 p-4 w-full rounded-lg bg-red-600 text-white font-semibold' onClick={handleValidation}>
                         Sign In
                     </button>
-                    <input type='checkbox' name='' id='' />
                     <Link
                         to='/signup'>
                         <p className='cursor-pointer py-4 text-white' >
