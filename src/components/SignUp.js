@@ -1,36 +1,60 @@
-import React, { useState,useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import Header from './Header';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { checkDataValidation } from '../utils/validate';
-import {  createUserWithEmailAndPassword } from "firebase/auth";
+import {updateProfile, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../utils/firebase';
+import { useDispatch } from 'react-redux';
+import { addUser } from '../utils/userSlice';
 
 
 const SignUp = () => {
+const navigate = useNavigate();
+const dispatch= useDispatch();
 
-    
+    const name = useRef(null)
     const email = useRef(null);
     const password = useRef(null);
-    const[ErrorMessage, setErrorMessage]=useState("");
+    const [ErrorMessage, setErrorMessage] = useState("");
 
 
 
     const handleValidation = () => {
-      const message= checkDataValidation(email.current.value, password.current.value);
-setErrorMessage(message)
-if(message===null){
-createUserWithEmailAndPassword(auth,email.current.value, password.current.value)
-  .then((userCredential) => {
-    const user = userCredential.user;
-    console.log(user);
-    // ...
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    // ..
-  });
-}
+
+        const message = checkDataValidation(email.current.value, password.current.value);
+        setErrorMessage(message)
+        if (message === null) {
+            createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
+                .then((userCredential) => {
+                    const user = userCredential.user;
+                    // console.log(user);
+                    updateProfile(user, {
+                        displayName: name.current.value,
+                         photoURL: "https://example.com/jane-q-user/profile.jpg"
+                      }).then(() => {
+                        const{uid , email , displayName, photoURL}= auth.currentUser
+                       dispatch(addUser({
+                        uid:uid,
+                        email:email,
+                        displayName:displayName,
+                        photoURL:photoURL
+                       }))
+  
+                        navigate("/browse")
+
+                      }).catch((error) => {
+                        // An error occurred
+                        // ...
+                      });
+                    //   console.log(displayName)
+                    // ...
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    // ..
+                });
+        }
 
     }
 
@@ -46,12 +70,13 @@ createUserWithEmailAndPassword(auth,email.current.value, password.current.value)
                 />
             </div>
             <div className='h-screen text-white flex flex-col items-center justify-center'>
-                <form onSubmit={(e)=>e.preventDefault()} className='absolute mt-20 p-14 bg-black w-1/3 bg-opacity-80'>
+                <form onSubmit={(e) => e.preventDefault()} className='absolute mt-20 p-14 bg-black w-1/3 bg-opacity-80'>
                     <h1 className='text-white font-bold text-3xl py-4'>
                         Sign Up
                     </h1>
 
                     <input
+                    ref={name}
                         className='rounded-lg my-4 p-4 w-full bg-gray-700'
                         type='text'
                         placeholder='Name of User'
@@ -59,14 +84,14 @@ createUserWithEmailAndPassword(auth,email.current.value, password.current.value)
 
                     <br />
                     <input
-                    ref={email}
+                        ref={email}
                         className='rounded-lg my-4 p-4 w-full bg-gray-700'
                         type='email'
                         placeholder='Email or Phone Number'
                     />
                     <br />
                     <input
-                    ref={password}
+                        ref={password}
                         className='rounded-lg my-4 p-4 w-full bg-gray-700'
                         type='password'
                         placeholder='Password'
@@ -79,12 +104,12 @@ createUserWithEmailAndPassword(auth,email.current.value, password.current.value)
                     </button>
                     <input type='checkbox' name='' id='' />
                     <Link
-                    to='/'>
-                    <p className='cursor-pointer py-4 text-white'>
+                        to='/'>
+                        <p className='cursor-pointer py-4 text-white'>
 
-                    Already signed up ? Sign In Now
+                            Already signed up ? Sign In Now
 
-                    </p>
+                        </p>
 
                     </Link>
                 </form>

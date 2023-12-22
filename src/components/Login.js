@@ -1,36 +1,38 @@
 import React, { useRef, useState } from 'react';
 import Header from './Header';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { checkDataValidation } from '../utils/validate';
 import { auth } from '../utils/firebase';
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import {  signInWithEmailAndPassword } from "firebase/auth";
 
 
 const Login = () => {
 
     const email = useRef(null);
     const password = useRef(null);
-    const[ErrorMessage, setErrorMessage]=useState("");
-
+    const [ErrorMessage, setErrorMessage] = useState("");
+const navigate = useNavigate();
 
 
     const handleValidation = () => {
-      const message= checkDataValidation(email.current.value, password.current.value);
-setErrorMessage(message)
+        const message = checkDataValidation(email.current.value, password.current.value);
+        setErrorMessage(message)
 
-if(message===null){
-    signInWithEmailAndPassword(auth,email.current.value, password.current.value)
-  .then((userCredential) => {
-    // Signed in 
-    const user = userCredential.user;
-    console.log(user)
-    // ...
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-  });
-}
+        if (message === null) {
+            signInWithEmailAndPassword(auth, email.current.value, password.current.value)
+                .then((userCredential) => {
+                    // Signed in 
+                    const user = userCredential.user;
+                    console.log(user)
+                    navigate("/browse")
+
+                    // ...
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                });
+        }
 
     }
 
@@ -47,12 +49,12 @@ if(message===null){
             <div className='h-screen text-white flex flex-col items-center justify-center'>
                 <form onSubmit={(e) => e.preventDefault()} className='absolute mt-20 p-14 bg-black w-1/3 bg-opacity-80'>
                     <h1 className='text-white font-bold text-3xl py-4'>
-                        Sign In
+                        Log In
                     </h1>
 
 
                     <input
-                    ref={email}
+                        ref={email}
                         className='rounded-lg my-4 p-4 w-full bg-gray-700'
                         type='email'
                         placeholder='Email or Phone Number'
@@ -60,7 +62,7 @@ if(message===null){
 
                     <br />
                     <input
-                    ref={password}
+                        ref={password}
                         className='rounded-lg my-4 p-4 w-full bg-gray-700'
                         type='password'
                         placeholder='Password'
@@ -69,12 +71,12 @@ if(message===null){
                     <p className='text-red-700 font-semibold'>{ErrorMessage}</p>
 
                     <button className='my-6 p-4 w-full rounded-lg bg-red-600 text-white font-semibold' onClick={handleValidation}>
-                        Sign In
+                       Log In
                     </button>
                     <Link
                         to='/signup'>
                         <p className='cursor-pointer py-4 text-white' >
-                            New to Netflix ? Sign In Now
+                            New to Netflix ? Sign Up Now
                         </p>
 
                     </Link>
