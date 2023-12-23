@@ -47,7 +47,7 @@ const Header = () => {
    },[])
 
   return (
-    <div className='absolute w-screen px-8 py-2 bg-gradient-to-b from-black z-10 flex justify-between '>
+    <div className='absolute w-[98vw] px-6 py-2 bg-gradient-to-b from-black z-10 flex justify-between '>
       <img className='w-44' src={LOGO} />
 
       {user &&
@@ -57,7 +57,7 @@ const Header = () => {
           {
             dropDown ?
               (
-                <div className='bg-black text-white p-2 absolute top-[4rem] right-[5.5rem] h-[15rem] w-[10rem]  from-black '>
+                <div className='bg-black text-white  absolute top-[4rem] right-[5.5rem] h-[15rem] w-[10rem]  from-black '>
                   <p>Mange Profile</p>
                   <p>Account</p>
                   <p>Help Centre</p>

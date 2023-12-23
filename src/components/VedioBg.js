@@ -11,14 +11,14 @@ const VedioBg = ({ id }) => {
 useTrailerVideo(id);
 
   return (
-    <div className='w-screen overflow-hidden'>
+    <div className='w-[1260px] '>
       <iframe 
-      className='w-screen aspect-video'
+      className='w-[1263px] aspect-video'
      
-        src={"https://www.youtube.com/embed/"+trailerVideo?.key+"?&rel=0&autoplay=1&mute=1&modestbranding=1&showinfo=0&rel=0" }
+        src={"https://www.youtube.com/embed/"+trailerVideo?.key+"?&autoplay=1&mute=1&showInfo=0&controls=0" }
         title="YouTube video player"
         frameBorder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allow=" allow=fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowFullScreen></iframe>
 
     </div>
