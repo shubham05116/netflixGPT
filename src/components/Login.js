@@ -2,16 +2,22 @@ import React, { useRef, useState } from 'react';
 import Header from './Header';
 import { Link, useNavigate } from 'react-router-dom';
 import { checkDataValidation } from '../utils/validate';
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { updateProfile, createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from '../utils/firebase';
-import {  signInWithEmailAndPassword } from "firebase/auth";
+import { useDispatch } from 'react-redux';
+import { addUser } from '../utils/userSlice';
 
 
 const Login = () => {
 
     const email = useRef(null);
+    const dispatch = useDispatch();
+
+    const name = useRef(null)
     const password = useRef(null);
     const [ErrorMessage, setErrorMessage] = useState("");
-const navigate = useNavigate();
+    const [signUp, setSignUp] = useState(false)
 
 
     const handleValidation = () => {
@@ -19,21 +25,61 @@ const navigate = useNavigate();
         setErrorMessage(message)
 
         if (message === null) {
-            signInWithEmailAndPassword(auth, email.current.value, password.current.value)
-                .then((userCredential) => {
-                    // Signed in 
-                    const user = userCredential.user;
-                    console.log(user)
-                    navigate("/browse")
+            if (!signUp) {
+                signInWithEmailAndPassword(auth, email.current.value, password.current.value)
+                    .then((userCredential) => {
+                        // Signed in 
+                        const user = userCredential.user;
+                        // console.log(user)
+                        // navigate("/browse")
 
-                    // ...
-                })
-                .catch((error) => {
-                    const errorCode = error.code;
-                    const errorMessage = error.message;
-                });
+                        // ...
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                    });
+            }
+
+            else {
+                createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
+                    .then((userCredential) => {
+                        const user = userCredential.user;
+                        // console.log(user);
+                        updateProfile(user, {
+                            displayName: name.current.value,
+                            photoURL: "https://example.com/jane-q-user/profile.jpg"
+                        }).then(() => {
+                            const { uid, email, displayName, photoURL } = auth.currentUser
+                            dispatch(addUser({
+                                uid: uid,
+                                email: email,
+                                displayName: displayName,
+                                photoURL: photoURL
+                            }))
+
+                            // navigate("/browse")
+
+                        }).catch((error) => {
+                            // An error occurred
+                            // ...
+                        });
+                        //   console.log(displayName)
+                        // ...
+                    })
+                    .catch((error) => {
+                        const errorCode = error.code;
+                        const errorMessage = error.message;
+                        // ..
+                    });
+            }
+
         }
 
+    }
+
+    function clickHandler() {
+        setSignUp(prev => !prev)
     }
 
 
@@ -49,10 +95,19 @@ const navigate = useNavigate();
             <div className='h-screen text-white flex flex-col items-center justify-center'>
                 <form onSubmit={(e) => e.preventDefault()} className='absolute mt-20 p-14 bg-black w-1/3 bg-opacity-80'>
                     <h1 className='text-white font-bold text-3xl py-4'>
-                        Log In
+                        {signUp ? "Sign Up" : "Log In"}
                     </h1>
 
+                    {signUp && (<div>
+                        <input
+                            ref={name}
+                            className='rounded-lg my-4 p-4 w-full bg-gray-700'
+                            type='text'
+                            placeholder='Name of User'
+                        />
 
+                        <br />
+                    </div>)}
                     <input
                         ref={email}
                         className='rounded-lg my-4 p-4 w-full bg-gray-700'
@@ -71,15 +126,16 @@ const navigate = useNavigate();
                     <p className='text-red-700 font-semibold'>{ErrorMessage}</p>
 
                     <button className='my-6 p-4 w-full rounded-lg bg-red-600 text-white font-semibold' onClick={handleValidation}>
-                       Log In
+                        {signUp ? "Sign Up" : "Log In"}
                     </button>
-                    <Link
-                        to='/signup'>
-                        <p className='cursor-pointer py-4 text-white' >
-                            New to Netflix ? Sign Up Now
-                        </p>
 
-                    </Link>
+                    <p className='cursor-pointer py-4 text-white' onClick={clickHandler} >
+                        {
+                            signUp ? " Already signed up ? Sign In Now" : "New to Netflix ? Sign Up Now"
+                        }
+                    </p>
+
+
 
                 </form>
             </div>
