@@ -1,5 +1,0 @@
-@layer utilities {
-    .ms-overflow-style {
-      -ms-overflow-style: none; /* Replace 'scrollbar' with your desired value */
-    }
-  }

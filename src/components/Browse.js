@@ -7,6 +7,8 @@ import usePopularMovies from '../Custom hooks/usePopularMovies';
 
 import GptSearch from './GptSearch';
 import { useSelector } from 'react-redux';
+import useUpcomingMovies from '../Custom hooks/useUpcomingMovies';
+import useTopRatedMovies from '../Custom hooks/useTopRatedMovies';
 
 
 const Browse = () => {
@@ -15,7 +17,10 @@ const Browse = () => {
 
   useNowPlayingMovies();
   // console.log(usePopularMovies())
+  useTopRatedMovies();
+  useUpcomingMovies();
   usePopularMovies();
+  // console.log(useUpcomingMovies())
 
   return (
     <div>
