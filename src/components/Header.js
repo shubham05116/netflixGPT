@@ -5,10 +5,13 @@ import { auth } from '../utils/firebase';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUser, removeUser } from '../utils/userSlice';
 import { LOGO } from '../utils/constants';
+import { addGptSearch } from '../utils/searchSlice';
 
 const Header = () => {
   const [dropDown, setDropDown] = useState(false);
   const user = useSelector(store => store.user)
+  const gpt = useSelector((store) => store.search?.gptSearch)
+
   const navigate = useNavigate()
   const dispatch= useDispatch();
 
@@ -46,13 +49,19 @@ const Header = () => {
   return ()=> unsubscribe();
    },[])
 
+   function gptHandler(){
+    dispatch(addGptSearch())
+   }
+
   return (
-    <div className='absolute w-[98vw] px-6 py-2 bg-gradient-to-b from-black z-10 flex justify-between '>
+    <div className='absolute w-full overflow-x-hidden px-6 py-2 bg-gradient-to-b from-black z-10 flex justify-between '>
       <img className='w-44' src={LOGO} />
 
       {user &&
         <div className='flex p-2'>
-
+           <button onClick={gptHandler} className='bg-red-500 px-5 py-2 text-white mx-4 h-12 rounded-lg'>
+           {gpt?"Homepage":" GPT Search"}
+          </button>
           <img onClick={clickHandler} className="w-12 h-12" src="https://i.pinimg.com/474x/5b/50/e7/5b50e75d07c726d36f397f6359098f58.jpg" alt="" />
           {
             dropDown ?
