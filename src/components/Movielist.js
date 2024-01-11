@@ -1,29 +1,22 @@
-import React from 'react'
-import MovieCard from './MovieCard'
-import { IMG_URL } from '../utils/constants'
+import React from "react";
+import MovieCard from "./MovieCard";
+import { Link } from "react-router-dom";
 
-const Movielist = ({title , movies}) => {
-    // console.log(movies)
-    if (!movies) {
-        return null; // or return some fallback UI if appropriate
-      }
+const MovieList = ({ title, movies}) => {
+
+
   return (
-    <div className='px-6  text-white'>
-            <h1 className='text-3xl font-semibold py-4'>{title}</h1>
-
-    <div className='flex overflow-x-scroll '>
-        <div className='flex  '>
-        {
-            movies.map((movie)=>(
-                <MovieCard key={movie.id} posterPath={movie.poster_path}/>
-
-            ))
-        }
+    <div className=" px-6 ">
+        <h1 className="text-lg font-semibold md:font-normal md:text-3xl py-3 text-white">{title}</h1>
+      <div className="flex overflow-x-scroll no-scrollbar">
+        <div className="flex">
+            {movies?.map(movie => <Link  key={movie.id} to={"/watch?v="+movie.id}><MovieCard  posterPath={movie.poster_path} /></Link>)}
+            {/* {videos?.map(video => <Link  key={video.id} to={"/watch?v="+ video.id}><Videocard info={video}/></Link> )} */}
         </div>
-    </div>
       
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Movielist
+export default MovieList;

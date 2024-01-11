@@ -1,24 +1,21 @@
 import React from 'react'
-import VedioBg from './VedioBg'
-import VedioTitle from './VedioTitle'
 import { useSelector } from 'react-redux'
+import VideoTitle from './VideoTitle';
+import VideoBackground from './VideoBackground';
 
 const MainContainer = () => {
 
-    const movies = useSelector(store=> store.movies?.nowPlayingMovies)
+    const movies = useSelector(store => store.movies?.nowPlayingMovies);
 
-if(!movies) return;
+    if(!movies) return;
 
-const MainMovie = movies[1];
-// console.log(MainMovie)
-
-const {original_title, overview , id } = MainMovie;
-
+    const mainMovie = movies[0];
+    
+    const {original_title, overview, id} = mainMovie;
   return (
-    <div>
-        <VedioTitle title={original_title} overview={overview}/>
-    <VedioBg id={id}/>
-      
+    <div className='md:mb-[-22px]'>
+        <VideoTitle title={original_title} overview={overview}/>
+        <VideoBackground movieId={id}/>
     </div>
   )
 }
